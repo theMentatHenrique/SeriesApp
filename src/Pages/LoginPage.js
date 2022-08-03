@@ -1,15 +1,14 @@
 import React from 'react';
-import { View, TextInput, StyleSheet, Button,ActivityIndicator,Text,Alert} from 'react-native';
+import { View, TextInput, StyleSheet, Button, ActivityIndicator, Text, Alert } from 'react-native';
 import FormRow from '../Components/FormRow';
 import { initializeApp } from 'firebase/app';
 import 'firebase/auth';
 //não ESQUECE o estilo do loading
-import {connect} from 'react-redux';
-import { trylogin } from '../Actions/Index';
+import { connect } from 'react-redux';
+import { tryLogin } from '../Actions/UserActions';
 
 
-
-  class LoginPage extends React.Component {
+class LoginPage extends React.Component {
 
     constructor(props) {
         super(props);
@@ -17,11 +16,11 @@ import { trylogin } from '../Actions/Index';
         this.state = {
             email: '',
             password: '',
-            isLoading:false,
-            message:'',
+            isLoading: false,
+            message: '',
         }
     }
-    componentDidMount(){
+    componentDidMount() {
         const firebaseConfig = {
             apiKey: "AIzaSyAwBjsj1ibR17xSQGKx0y0RvSg68uu7BsQ",
             authDomain: "series-a1e9e.firebaseapp.com",
@@ -30,10 +29,10 @@ import { trylogin } from '../Actions/Index';
             messagingSenderId: "397511783524",
             appId: "1:397511783524:web:f75a5337f4d2dca1d0db71",
             measurementId: "G-M13BT9DE59"
-          };
-          
-         const teste= initializeApp(firebaseConfig);
-      
+        };
+
+        const teste = initializeApp(firebaseConfig);
+
     }
 
 
@@ -44,50 +43,67 @@ import { trylogin } from '../Actions/Index';
         });
 
     }
-    renderButton(){
+    renderButton() {
 
-        if(this.state.isLoading){
-            return <ActivityIndicator/>;
+        if (this.state.isLoading) {
+            return <ActivityIndicator />;
         }
-        return(
-        <Button style={Styles.button} 
-        title="Entrar" 
-        onPress={()=>this.tryLogin()}
-        />
+        return (
+            <Button style={Styles.button}
+                title="Entrar"
+                onPress={() => this.tryLogin()}
+            />
         );
 
     }
-    renderMessage(){
-        const {message}=this.state
+    renderMessage() {
+        const { message } = this.state
 
-        if(!message)return null
+        if (!message) return null
 
-        else{
-            return(
+        else {
+            return (
                 <View><Text>{message}</Text></View>
 
             );
         }
     }
-    getMessageByErrorCode(errorCode){
-        switch(errorCode){
+    getMessageByErrorCode(errorCode) {
+        switch (errorCode) {
 
             case 'auth/wrong-password':
                 return 'Senha incorreta';
 
             case 'auth/user-not-found':
                 return 'Email incorreto ou inexistente';
-                default:
-                    return 'Erro desconhecido';
+            default:
+                return 'Erro desconhecido';
         }
 
 
     }
 
-    tryLogin(){
-        this.setState({isLoading:true,message:''})
-const {email,password} = this.state;
-this.props.trylogin({email,password});
+    tryLogin() {
+        this.setState({ isLoading: true, message: '' })
+        const { email, password } = this.state;
+        const teste = this.props.tryLogin({ email, password }).
+            then(user => {
+                if (user) { return this.props.navigation.replace('Main'); }
+
+
+                this.setState({
+                    isLoading: false,
+                    message: ''
+                });
+
+            }).catch((error => {
+                this.setState({
+                    isLoading: false, message:
+                        this.getMessageByErrorCode(error.code)
+                })
+
+
+            }))
 
 
 
@@ -119,7 +135,7 @@ this.props.trylogin({email,password});
                 </FormRow>
                 {this.renderButton()}
                 {this.renderMessage()}
-              
+
 
             </View>
 
@@ -138,9 +154,9 @@ const Styles = StyleSheet.create({
         paddingBottom: 5,
 
     },
-    button:{
-        backgroundColor:'E50914',
+    button: {
+        backgroundColor: 'E50914',
     },
 })
 
-export default connect(null,{trylogin})(LoginPage)
+export default connect(null, { tryLogin })(LoginPage)
