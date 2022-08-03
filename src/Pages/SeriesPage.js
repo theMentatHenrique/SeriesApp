@@ -1,13 +1,24 @@
 import React from "react";
-import {View,Text} from 'react-native';
+import {View,Text,FlatList} from 'react-native';
+import series from '../../SeriesMock.json'
 
 
-const SeriesPage=({series})=>{
+const SeriesPage=props=>{
 return(
 <View>
-    <Text>
-        hello 2 pagina 
-    </Text>
+    <FlatList
+    data={series}
+
+renderItem={({item})=>(
+
+
+    <View>
+        <Text>{item.Key}-{item.title}</Text>
+        </View>
+)}
+    
+    
+    />
 </View>
 );
 
