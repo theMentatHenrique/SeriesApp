@@ -14,7 +14,6 @@ import "firebase/auth";
 //não ESQUECE o estilo do loading
 import { connect } from "react-redux";
 import { tryLogin } from "../Actions/UserActions";
-//git rm
 
 class LoginPage extends React.Component {
   constructor(props) {
